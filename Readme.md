@@ -6,3 +6,19 @@
 - Listen to PORT 3000
 - Write request handlers for /test, /hello
 - Install nodemon and update scripts inside package.json
+
+- Initialize git
+- .gitignore
+- Create a remote repo on github
+- Push all code to remote origin
+- Play with routes
+- Order of routes matter a lot
+- Install Postman app and create workspace to test API
+- Write a logic to handle GET, POST, DELETE API calls and test them from postman
+- Reading query params in the routes
+- Reading dynamic routes
+
+- Multiple route handlers - play with the code
+- next()
+- next function and errors along with res.send()
+- app.use("/route", rH1, [rH2, rH3], rH4, rH5)
