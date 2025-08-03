@@ -1,0 +1,8 @@
+- Create a repository
+- Initialize a repository
+- node_modules package.json package-lock.json
+- Install express
+- Create a server
+- Listen to PORT 3000
+- Write request handlers for /test, /hello
+- Install nodemon and update scripts inside package.json
