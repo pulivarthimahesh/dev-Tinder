@@ -1,6 +1,11 @@
 const express = require("express");
+const { userAuth } = require("../middlewares/user-auth");
 const app = express();
 const PORT = 3000;
+
+app.get("/user1", userAuth, (req, res, next) => {
+  res.send("User is authorized.");
+});
 
 app.use("/user", [
   (req, res, next) => {
