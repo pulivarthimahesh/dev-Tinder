@@ -38,3 +38,6 @@
 
 - Add express.json() middleware to your app
 - Make your signup API dynamic to get data from the end user
+- User findOne with duplicate email ids, which object returned
+- API - Get user by email
+- API - Feed API - GET /feed - get all the users fro the database

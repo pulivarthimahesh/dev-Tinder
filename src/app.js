@@ -8,6 +8,29 @@ const PORT = 3000;
 
 app.use(express.json());
 
+app.get("/userByEmail", async (req, res) => {
+  try {
+    console.log(req.body.email);
+    const users = await User.findOne({ email: req.body.email });
+    if (users.length == 0) {
+      res.send("User not found!!!");
+    } else {
+      res.send(users);
+    }
+  } catch (err) {
+    res.send("Something went wrong!!!");
+  }
+});
+
+app.get("/userFeed", async (req, res) => {
+  try {
+    const users = await User.find();
+    res.send(users);
+  } catch (err) {
+    res.send("Something went wrong!!! " + err.message);
+  }
+});
+
 app.post("/signup", async (req, res) => {
   try {
     const user = new User(req.body);
