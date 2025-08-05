@@ -1,48 +1,37 @@
 const express = require("express");
-const { userAuth } = require("../middlewares/user-auth");
+const { connectDB } = require("./config/mongodb");
+const { userAuth } = require("./middlewares/user-auth");
+const { User } = require("./models/User");
+
 const app = express();
 const PORT = 3000;
 
-app.get("/user1", userAuth, (req, res, next) => {
-  res.send("User is authorized.");
-});
+app.post("/user", async (req, res) => {
+  let userObj = {
+    firstName: "Virat",
+    lastName: "Kohli",
+    email: "mahesh@gmail.com",
+    password: "Mahesh@1234",
+  };
 
-app.use("/user", [
-  (req, res, next) => {
-    console.log("Handling user from user 1");
-    // res.send("Handling user from user 1");
-    next();
-  },
-  (req, res, next) => {
-    console.log("Handling user from user 2");
-    // res.send("Handling user from user 2");
-    next();
-  },
-  (req, res, next) => {
-    console.log("Handling user from user 3");
-    // res.send("Handling user from user 3");
-    next();
-  },
-  (req, res, next) => {
-    console.log("Handling user from user 4");
-    // res.send("Handling user from user 4");
-    next();
-  },
-  (req, res, next) => {
-    try {
-      console.log("Handling user from user 5");
-      // res.send("Handling user from user 5");
-      throw new Error("Something went wrong!");
-    } catch (err) {
-      res.send(err.message);
-    }
-  },
-]);
+  try {
+    const user = new User(userObj);
+    await user.save();
+    res.send("User added successfully!!!");
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
 
 app.use("/", (err, req, res, next) => {
   res.status(500).send(err.message);
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is successfully running on ${PORT}...`);
-});
+connectDB()
+  .then((res) => {
+    console.log("Connected to DB successfully!!!");
+    app.listen(PORT, () => {
+      console.log(`Server is successfully running on ${PORT}...`);
+    });
+  })
+  .catch((err) => console.log(err.message));
