@@ -6,16 +6,11 @@ const { User } = require("./models/User");
 const app = express();
 const PORT = 3000;
 
-app.post("/user", async (req, res) => {
-  let userObj = {
-    firstName: "Virat",
-    lastName: "Kohli",
-    email: "mahesh@gmail.com",
-    password: "Mahesh@1234",
-  };
+app.use(express.json());
 
+app.post("/signup", async (req, res) => {
   try {
-    const user = new User(userObj);
+    const user = new User(req.body);
     await user.save();
     res.send("User added successfully!!!");
   } catch (err) {
