@@ -8,9 +8,29 @@ const PORT = 3000;
 
 app.use(express.json());
 
+app.patch("/user", async (req, res) => {
+  console.log(req.body);
+  try {
+    const user = await User.findOneAndUpdate(
+      { _id: req.body.userId },
+      req.body,
+      {
+        runValidators: true,
+        returnDocument: "before",
+      }
+    );
+    if (user) {
+      res.send("Updated successfully!!!");
+    } else {
+      throw new Error("User not found!!!");
+    }
+  } catch (err) {
+    res.send("Something went wrong!!! " + err.message);
+  }
+});
+
 app.get("/userByEmail", async (req, res) => {
   try {
-    console.log(req.body.email);
     const users = await User.findOne({ email: req.body.email });
     if (users.length == 0) {
       res.send("User not found!!!");

@@ -41,3 +41,11 @@
 - User findOne with duplicate email ids, which object returned
 - API - Get user by email
 - API - Feed API - GET /feed - get all the users fro the database
+
+- Explore SchemaType options from the documentation
+- Add required, unique, lowercase, min, minlength, trim
+- Add default
+- Create a custom validate function for the gender
+- Improve the DB schema - PUT all appropriate validations on each field in Schema
+- Add timestamps to the userSchema
+- Never trust req.body
