@@ -48,4 +48,13 @@
 - Create a custom validate function for the gender
 - Improve the DB schema - PUT all appropriate validations on each field in Schema
 - Add timestamps to the userSchema
+- Add API level validations for PATCH request and signup post API
+- Data sanitizing- Add API validation for each field
+- Install validator
+- Explore validator library functions and apply for email, password
 - Never trust req.body
+
+- Validate data in signup API
+- Install bcrypt package
+- Create passwordhash using bcrypt.hash and save it into the DB
+- Create a login POST API

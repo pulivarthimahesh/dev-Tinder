@@ -1,12 +1,28 @@
 const express = require("express");
+const bcrypt = require("bcrypt");
 const { connectDB } = require("./config/mongodb");
 const { userAuth } = require("./middlewares/user-auth");
 const { User } = require("./models/User");
+const { signupDataValidation } = require("./utils/signupDataValidation");
 
 const app = express();
 const PORT = 3000;
 
 app.use(express.json());
+
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  const user = await User.findOne({ email: email });
+  if (!user) {
+    throw new Error("Invalid credentials");
+  }
+  const isValidPassword = bcrypt.compareSync(password, user.password);
+  if (!isValidPassword) {
+    throw new Error("Invalid credentials");
+  } else {
+    res.send("Login successfull!!!");
+  }
+});
 
 app.patch("/user", async (req, res) => {
   console.log(req.body);
@@ -53,7 +69,15 @@ app.get("/userFeed", async (req, res) => {
 
 app.post("/signup", async (req, res) => {
   try {
-    const user = new User(req.body);
+    signupDataValidation(req);
+    const { firstName, lastName, email, password } = req.body;
+    const passwordHash = bcrypt.hashSync(password, 10);
+    const user = new User({
+      firstName,
+      lastName,
+      email,
+      password: passwordHash,
+    });
     await user.save();
     res.send("User added successfully!!!");
   } catch (err) {
