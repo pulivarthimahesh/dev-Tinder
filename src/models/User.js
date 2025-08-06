@@ -40,6 +40,14 @@ const UserSchema = new mongoose.Schema(
       type: String,
       default: "This is default about for the user",
     },
+    skills: {
+      type: [String],
+      validate(value) {
+        if (value.length > 3) {
+          throw new Error("Invalid skills!!!");
+        }
+      },
+    },
   },
   { timestamps: true }
 );

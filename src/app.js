@@ -4,6 +4,10 @@ const { connectDB } = require("./config/mongodb");
 const { userAuth } = require("./middlewares/user-auth");
 const { User } = require("./models/User");
 const { signupDataValidation } = require("./utils/signupDataValidation");
+const { deleteDataValidation } = require("./utils/deleteDataValidation");
+const {
+  updateUserDataValidation,
+} = require("./utils/updateUserDataValidation");
 
 const app = express();
 const PORT = 3000;
@@ -24,17 +28,14 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.patch("/user", async (req, res) => {
-  console.log(req.body);
+app.patch("/user/:userId", async (req, res) => {
   try {
-    const user = await User.findOneAndUpdate(
-      { _id: req.body.userId },
-      req.body,
-      {
-        runValidators: true,
-        returnDocument: "before",
-      }
-    );
+    updateUserDataValidation(req);
+    const userId = req.params.userId;
+    const user = await User.findOneAndUpdate({ _id: userId }, req.body, {
+      runValidators: true,
+      returnDocument: "before",
+    });
     if (user) {
       res.send("Updated successfully!!!");
     } else {
@@ -80,6 +81,25 @@ app.post("/signup", async (req, res) => {
     });
     await user.save();
     res.send("User added successfully!!!");
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+app.delete("/user", async (req, res) => {
+  try {
+    deleteDataValidation(req);
+
+    const { email } = req.body;
+    User.deleteOne({ email: email }).then((deleteRes) => {
+      console.log(JSON.stringify(deleteRes));
+      const { deletedCount } = deleteRes;
+      if (deletedCount == 0) {
+        res.send("Invalid user!!!");
+      } else {
+        res.send("Deleted successfully!!!");
+      }
+    });
   } catch (err) {
     res.status(500).send(err.message);
   }
