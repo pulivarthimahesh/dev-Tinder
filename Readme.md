@@ -58,3 +58,14 @@
 - Install bcrypt package
 - Create passwordhash using bcrypt.hash and save it into the DB
 - Create a login POST API
+
+- Install cookie-parser
+- Just send dummy token to the user
+- Create GET /profile API and check if you get the cookie back
+- Install jsonwebtoken
+- In login API, after email and password validation, create a JWT token and sent it to the user in cookies and read the cookies inside your profile API and find the logged in user.
+- userAuth middleware
+- Add userAuth middleware in profile and a new sendConnectionRequest API
+- Set the expiry of JWT token and cookies to 7 days
+- Create user schema method to getJWT()
+- Create user schema method to compare password

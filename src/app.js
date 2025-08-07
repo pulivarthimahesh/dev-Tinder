@@ -1,5 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
+var jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 const { connectDB } = require("./config/mongodb");
 const { userAuth } = require("./middlewares/user-auth");
 const { User } = require("./models/User");
@@ -13,24 +15,49 @@ const app = express();
 const PORT = 3000;
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email: email });
-  if (!user) {
-    throw new Error("Invalid credentials");
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      throw new Error("Invalid credentials");
+    }
+    const isValidPassword = user.comparePassword(password);
+    if (!isValidPassword) {
+      throw new Error("Invalid credentials");
+    } else {
+      var token = await user.getJWT();
+      res.cookie("token", token);
+      res.send("Login successfull!!!");
+    }
+  } catch (err) {
+    res.send("ERROR: " + err.message);
   }
-  const isValidPassword = bcrypt.compareSync(password, user.password);
-  if (!isValidPassword) {
-    throw new Error("Invalid credentials");
-  } else {
-    res.send("Login successfull!!!");
+});
+
+app.get("/profile", userAuth, (req, res) => {
+  try {
+    res.send(req.user);
+  } catch (err) {
+    res.send("ERROR: " + err.message);
+  }
+});
+
+app.post("/sendConnectionRequest", userAuth, (req, res) => {
+  try {
+    console.log("sendConnectionRequest");
+    res.send(req.user.firstName + " sent connect request!!!");
+  } catch (err) {
+    res.send("ERROR: " + err.message);
   }
 });
 
 app.patch("/user/:userId", async (req, res) => {
   try {
     updateUserDataValidation(req);
+
     const userId = req.params.userId;
     const user = await User.findOneAndUpdate({ _id: userId }, req.body, {
       runValidators: true,
@@ -42,7 +69,7 @@ app.patch("/user/:userId", async (req, res) => {
       throw new Error("User not found!!!");
     }
   } catch (err) {
-    res.send("Something went wrong!!! " + err.message);
+    res.send("ERROR: " + err.message);
   }
 });
 
@@ -55,7 +82,7 @@ app.get("/userByEmail", async (req, res) => {
       res.send(users);
     }
   } catch (err) {
-    res.send("Something went wrong!!!");
+    res.send("ERROR: " + err.message);
   }
 });
 
@@ -101,12 +128,12 @@ app.delete("/user", async (req, res) => {
       }
     });
   } catch (err) {
-    res.status(500).send(err.message);
+    res.status(500).send("ERROR: " + err.message);
   }
 });
 
 app.use("/", (err, req, res, next) => {
-  res.status(500).send(err.message);
+  res.status(500).send("ERROR: " + err.message);
 });
 
 connectDB()
